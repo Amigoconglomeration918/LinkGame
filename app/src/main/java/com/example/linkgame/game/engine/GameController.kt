@@ -24,6 +24,8 @@ class GameController(
         val selectedFirst: Pair<Int, Int>? = null,
         val selectedSecond: Pair<Int, Int>? = null,
         val pathCoords: List<Pair<Int, Int>>? = null,
+        val hintFirst: Pair<Int, Int>? = null,
+        val hintSecond: Pair<Int, Int>? = null,
         val score: Int = 0,
         val timeLeft: Int,
         val levelCleared: Boolean = false,
@@ -35,7 +37,8 @@ class GameController(
         val title: String = "",
         val challengeIndex: Int = 0,
         val endlessLevelNum: Int = 1,
-        val currentConfig: LevelConfig
+        val currentConfig: LevelConfig,
+        val remainingPairs: Int = 0   // 新增：剩余配对数量
     )
 
     private val _uiState = MutableStateFlow(createInitialState())
@@ -47,8 +50,8 @@ class GameController(
 
     // 暂停相关
     private var isPaused = false
-    private var pausedDuration = 0L          // 累计暂停毫秒数
-    private var pauseTimestamp = 0L           // 当前暂停开始时间
+    private var pausedDuration = 0L
+    private var pauseTimestamp = 0L
 
     fun setReturnCallback(callback: (() -> Unit)?) {
         returnCallback = callback
@@ -59,11 +62,13 @@ class GameController(
             is GameMode.Challenge -> ALL_LEVELS[0]
             is GameMode.Endless -> mode.difficulty
         }
+        val board = generateSolvableBoardForLevel(config)
         return UiState(
-            board = generateSolvableBoardForLevel(config),
+            board = board,
             timeLeft = config.timeLimit,
             currentConfig = config,
-            title = buildTitle(config, endlessLevelNum = 1, challengeIndex = 0)
+            title = buildTitle(config, endlessLevelNum = 1, challengeIndex = 0),
+            remainingPairs = calculateRemainingPairs(board)   // 初始化剩余配对数
         )
     }
 
@@ -85,12 +90,9 @@ class GameController(
                 delay(1000)
                 val state = _uiState.value
                 if (state.gameFinished || state.levelCleared) break
-                if (isPaused) continue       // 暂停时跳过倒计时
+                if (isPaused) continue
                 if (state.timeLeft > 0) {
-                    _uiState.value = state.copy(
-                        timeLeft = state.timeLeft - 1
-                        // 总时间不再实时更新，保存时再计算真实耗时
-                    )
+                    _uiState.value = state.copy(timeLeft = state.timeLeft - 1)
                 }
                 if (_uiState.value.timeLeft == 0 && !state.levelCleared && !state.gameFinished) {
                     finishGame()
@@ -112,6 +114,41 @@ class GameController(
             pauseTimestamp = 0
         }
         isPaused = false
+    }
+
+    fun showHint() {
+        val state = _uiState.value
+        if (state.levelCleared || state.gameFinished || isPaused) return
+
+        val hintPair = findHintPair(state.board)
+        if (hintPair != null) {
+            val (p1, p2) = hintPair
+            _uiState.value = state.copy(hintFirst = p1, hintSecond = p2)
+
+            viewModelScope.launch {
+                delay(2000)
+                _uiState.value = _uiState.value.copy(hintFirst = null, hintSecond = null)
+            }
+        }
+    }
+
+    private fun findHintPair(board: Board): Pair<Pair<Int, Int>, Pair<Int, Int>>? {
+        for (r1 in 0 until board.rows) {
+            for (c1 in 0 until board.cols) {
+                val v1 = board.cells[r1][c1]
+                if (v1 == 0) continue
+                for (r2 in 0 until board.rows) {
+                    for (c2 in 0 until board.cols) {
+                        if (r1 == r2 && c1 == c2) continue
+                        val v2 = board.cells[r2][c2]
+                        if (v2 == v1 && canConnectWithPadding(board, r1, c1, r2, c2)) {
+                            return Pair(Pair(r1, c1), Pair(r2, c2))
+                        }
+                    }
+                }
+            }
+        }
+        return null
     }
 
     fun onTileClick(r: Int, c: Int) {
@@ -138,13 +175,15 @@ class GameController(
                 val newBoard = removeTiles(state.board, first.first, first.second, second.first, second.second)
                 val newScore = state.score + 10
                 val cleared = isBoardCleared(newBoard)
+                val newRemainingPairs = calculateRemainingPairs(newBoard)
 
                 _uiState.value = _uiState.value.copy(
                     board = newBoard,
                     score = newScore,
                     selectedFirst = null,
                     selectedSecond = null,
-                    levelCleared = cleared
+                    levelCleared = cleared,
+                    remainingPairs = newRemainingPairs   // 更新剩余配对数
                 )
 
                 if (cleared) {
@@ -173,25 +212,29 @@ class GameController(
                 finishGame()
             } else {
                 val nextConfig = ALL_LEVELS[nextIndex]
+                val newBoard = generateSolvableBoardForLevel(nextConfig)
                 _uiState.value = state.copy(
                     challengeIndex = nextIndex,
                     currentConfig = nextConfig,
-                    board = generateSolvableBoardForLevel(nextConfig),
+                    board = newBoard,
                     timeLeft = nextConfig.timeLimit,
                     score = state.score,
                     levelCleared = false,
-                    title = buildTitle(nextConfig, challengeIndex = nextIndex)
+                    title = buildTitle(nextConfig, challengeIndex = nextIndex),
+                    remainingPairs = calculateRemainingPairs(newBoard)   // 新关卡剩余配对数
                 )
                 startTimer()
             }
         } else if (mode is GameMode.Endless) {
             val newLevelNum = state.endlessLevelNum + 1
+            val newBoard = generateSolvableBoardForLevel(state.currentConfig)
             _uiState.value = state.copy(
                 endlessLevelNum = newLevelNum,
-                board = generateSolvableBoardForLevel(state.currentConfig),
+                board = newBoard,
                 timeLeft = state.currentConfig.timeLimit,
                 levelCleared = false,
-                title = buildTitle(state.currentConfig, endlessLevelNum = newLevelNum)
+                title = buildTitle(state.currentConfig, endlessLevelNum = newLevelNum),
+                remainingPairs = calculateRemainingPairs(newBoard)   // 新关卡剩余配对数
             )
             startTimer()
         }
@@ -208,13 +251,11 @@ class GameController(
         }
     }
 
-    // 显示退出选择对话框（暂停游戏）
     fun showExitGameDialog() {
         pauseGame()
         _uiState.value = _uiState.value.copy(showExitGameDialog = true)
     }
 
-    // 关闭退出对话框（恢复游戏，如果游戏未结束）
     fun dismissExitGameDialog() {
         _uiState.value = _uiState.value.copy(showExitGameDialog = false)
         if (!_uiState.value.gameFinished) {
@@ -222,55 +263,45 @@ class GameController(
         }
     }
 
-    // 结束游戏（不显示对话框，仅停止计时器并标记结束）
     private fun endGame() {
         timerJob?.cancel()
         _uiState.value = _uiState.value.copy(gameFinished = true)
     }
 
-    // 游戏自然结束时调用（显示对话框）
     private fun finishGame() {
         endGame()
         _uiState.value = _uiState.value.copy(showExitGameDialog = true)
     }
 
-    // 右上角“退出”按钮调用
     fun exitGame() {
         showExitGameDialog()
     }
 
-    // 用户选择不保存直接返回
     fun returnWithoutSaving() {
-        dismissExitGameDialog()   // 关闭对话框
-        endGame()                 // 结束游戏
+        dismissExitGameDialog()
+        endGame()
         returnCallback?.invoke()
     }
 
-    // 保存分数（需要先检查昵称）
     fun saveScoreAndReturn() {
         viewModelScope.launch {
             val state = _uiState.value
             val nickname = NicknameRepository.getNickname(context)
             if (nickname.isNullOrBlank()) {
-                // 关闭退出对话框，显示昵称对话框
                 _uiState.value = state.copy(
                     showExitGameDialog = false,
                     showNicknameForSave = true
                 )
-                // 注意：此时游戏仍是暂停状态（因为退出对话框被关闭时没有调用 resumeGame）
-                // 在昵称对话框确认或取消时再决定恢复
             } else {
                 saveScoreWithNickname(nickname)
             }
         }
     }
 
-    // 保存分数（已知昵称）
     fun saveScoreWithNickname(nickname: String) {
         viewModelScope.launch {
             val state = _uiState.value
             NicknameRepository.saveNickname(context, nickname)
-            // 计算真实总用时（减去暂停时间）
             val totalSeconds = ((System.currentTimeMillis() - startTime - pausedDuration) / 1000).toInt()
             val entry = LeaderboardEntry(
                 nickname = nickname,
@@ -289,7 +320,7 @@ class GameController(
                 showNicknameForSave = false,
                 gameFinished = true
             )
-            endGame()   // 确保停止计时器
+            endGame()
             returnCallback?.invoke()
         }
     }
@@ -311,7 +342,6 @@ class GameController(
             showNicknameForSave = false,
             gameFinished = true
         )
-        // 不调用 returnCallback，仅关闭对话框
     }
 
     fun dismissNicknameDialog() {
@@ -320,5 +350,18 @@ class GameController(
             gameFinished = true
         )
         returnCallback?.invoke()
+    }
+
+    // 计算剩余配对数量：统计每个值的出现次数，每个值出现次数除以2并求和
+    private fun calculateRemainingPairs(board: Board): Int {
+        val countMap = mutableMapOf<Int, Int>()
+        for (row in board.cells) {
+            for (value in row) {
+                if (value != 0) {
+                    countMap[value] = countMap.getOrDefault(value, 0) + 1
+                }
+            }
+        }
+        return countMap.values.sumOf { it / 2 }
     }
 }

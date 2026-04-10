@@ -1,3 +1,4 @@
+// LeaderboardRepository.kt
 package com.example.linkgame.data.repository
 
 import android.content.Context
@@ -43,6 +44,13 @@ object LeaderboardRepository {
             } ?: emptyList()
             val newList = current.filter { it.id != id }
             preferences[entriesKey] = json.encodeToString(newList)
+        }
+    }
+
+    // 新增：清空所有排行榜记录
+    suspend fun clearAll(context: Context) {
+        context.dataStore.edit { preferences ->
+            preferences[entriesKey] = "[]"
         }
     }
 }

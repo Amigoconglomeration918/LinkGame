@@ -3,11 +3,13 @@ package com.example.linkgame.ui.screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow   // 新增
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -63,6 +65,9 @@ fun GameScreen(
             TopAppBar(
                 title = { Text(uiState.title) },
                 actions = {
+                    IconButton(onClick = { viewModel.showHint() }) {
+                        Icon(Icons.Default.Lightbulb, contentDescription = "提示")
+                    }
                     TextButton(onClick = { viewModel.exitGame() }) { Text("退出") }
                 }
             )
@@ -84,10 +89,12 @@ fun GameScreen(
                     .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // 在 GameScreen.kt 的 Scaffold 内容中，将 ScoreBar 调用改为：
                 ScoreBar(
                     score = uiState.score,
                     timeLeft = uiState.timeLeft,
                     totalTime = uiState.currentConfig.timeLimit,
+                    remainingPairs = uiState.remainingPairs,   // 新增
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(8.dp))
@@ -95,7 +102,7 @@ fun GameScreen(
                 Card(
                     modifier = Modifier
                         .padding(8.dp)
-                        .shadow(8.dp, shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),  // 这里使用了 shadow
+                        .shadow(8.dp, shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
                     shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
@@ -104,6 +111,8 @@ fun GameScreen(
                         selectedFirst = uiState.selectedFirst,
                         selectedSecond = uiState.selectedSecond,
                         pathCoords = uiState.pathCoords,
+                        hintFirst = uiState.hintFirst,
+                        hintSecond = uiState.hintSecond,
                         onTileClick = { r, c -> viewModel.onTileClick(r, c) },
                         modifier = Modifier
                     )
